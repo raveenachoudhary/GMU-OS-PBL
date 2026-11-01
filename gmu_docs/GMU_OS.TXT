@@ -1,0 +1,28 @@
+GMU OS - C-Oriented Learning Edition 0.1
+GM University, Davanagere, Karnataka
+UE25CS2304 Operating System with Practice
+Derived for education from MikeOS 4.7.0.
+
+COMMAND-LINE DIRECTORY LISTING
+------------------------------
+DIR lists root-directory filenames in four columns and prints the number
+of matching files. Use "DIR BIN" or "DIR TXT" to list only files with
+that extension. Other arguments are rejected with a usage message. LS
+retains the detailed directory listing.
+
+DIR reads the root FAT12 directory through os_get_file_list in
+source/features/disk.asm. That routine omits deleted entries, directories,
+volume labels and long-filename markers; DIR applies the optional extension
+filter and counts the names returned by the OS routine.
+
+Controlled floppy test (root entries: KERNEL.BIN, DEMO.BIN, NOTES.TXT,
+OTHER.BAS):
+  DIR:     shows all four names; Total matching files: 4
+  DIR BIN: shows KERNEL.BIN and DEMO.BIN; Total matching files: 2
+  DIR TXT: shows NOTES.TXT; Total matching files: 1
+Boot disk_images/gmuos-dir-test.flp in QEMU, choose Cancel for the CLI,
+then enter DIR, DIR BIN, and DIR TXT to reproduce these results.
+
+The total counts the entries returned by os_get_file_list, not directories
+or FAT volume labels.
+Original MikeOS copyright and license retained.

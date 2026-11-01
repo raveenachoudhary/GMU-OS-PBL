@@ -1,0 +1,12 @@
+# Compiled C build files
+c_src/build/
+*.o
+
+# Generated OS images
+disk_images/*.flp
+disk_images/*.iso
+disk_images/*.dmg
+
+# Temporary files
+*.tmp
+*.log
