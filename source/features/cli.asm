@@ -605,39 +605,47 @@ del_file:
 
 ; ------------------------------------------------------------------
 
-size_file:
-	mov word si, [param_list]
-	call os_string_parse
-	cmp ax, 0			; Was a filename provided?
-	jne .filename_provided
 
-	mov si, nofilename_msg		; If not, show error message
-	call os_print_string
-	jmp get_cmd
+size_file:
+        mov si, [param_list]
+        call os_string_parse
+        cmp ax, 0
+        jne .filename_provided
+
+        mov si, nofilename_msg
+        call os_print_string
+        jmp get_cmd
 
 .filename_provided:
-	call os_get_file_size
-	jc .failure
+        call os_get_file_size
+        jc .failure
 
-	mov si, .size_msg
-	call os_print_string
+        ; Convert 32-bit file size from EBX into DX:AX
+        mov ax, bx
+        mov edx, ebx
+        shr edx, 16
 
-	mov ax, bx
-	call os_int_to_string
-	mov si, ax
-	call os_print_string
-	call os_print_newline
-	jmp get_cmd
+        ; Convert the number into a decimal string
+        mov bx, 10
+        mov di, .number
+        call os_long_int_to_string
 
+        ; Display the result
+        mov si, .size_msg
+        call os_print_string
+
+        mov si, di
+        call os_print_string
+        call os_print_newline
+        jmp get_cmd
 
 .failure:
-	mov si, notfound_msg
-	call os_print_string
-	jmp get_cmd
+        mov si, notfound_msg
+        call os_print_string
+        jmp get_cmd
 
-
-	.size_msg	db 'Size (in bytes) is: ', 0
-
+.size_msg       db 'Size (in bytes) is: ', 0
+.number         times 13 db 0
 
 ; ------------------------------------------------------------------
 
