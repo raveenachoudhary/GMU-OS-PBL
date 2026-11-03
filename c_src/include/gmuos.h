@@ -275,7 +275,19 @@ static inline void gmu_get_cursor_position(gmu_u8 *row, gmu_u8 *column)
     *row = (gmu_u8)(position >> 8);
     *column = (gmu_u8)(position & 0xFF);
 }
+static inline void gmu_set_cursor_position(gmu_u8 row, gmu_u8 column)
+{
+    gmu_u16 position = ((gmu_u16)row << 8) | column;
 
+    __asm__ volatile (
+        "movw %0, %%dx\n\t"
+        "movw $0x0006, %%bx\n\t"
+        "callw *%%bx"
+        :
+        : "rm" (position)
+        : "ax", "bx", "cx", "dx", "si", "di", "cc", "memory"
+    );
+}
 static inline gmu_u8 gmu_get_video_mode(void)
 {
     gmu_u16 mode;
