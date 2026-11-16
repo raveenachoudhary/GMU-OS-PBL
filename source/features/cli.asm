@@ -105,6 +105,18 @@ get_cmd:				; Main processing loop
 	call os_string_compare
 	jc near size_file
 
+	mov di, count_string            ; 'COUNT' entered?
+    call os_string_compare
+    jc near count_file_operations
+
+	mov di, protect_string
+    call os_string_compare
+    jc near protect_file
+
+    mov di, unprotect_string
+    call os_string_compare
+    jc near unprotect_file
+
 	mov di, about_string		; 'ABOUT' entered?
 	call os_string_compare
 	jc near print_about
@@ -606,32 +618,109 @@ del_file:
 ; ------------------------------------------------------------------
 
 
+
+
+
 size_file:
         mov si, [param_list]
+        cmp si, 0
+        je .no_filename
+
         call os_string_parse
         cmp ax, 0
-        jne .filename_provided
+        je .no_filename
 
-        mov si, nofilename_msg
-        call os_print_string
-        jmp get_cmd
+        mov [.filename], ax
+        call int_filename_convert
+        jc .invalid_filename
 
-.filename_provided:
+        mov ax, [.filename]
         call os_get_file_size
-        jc .failure
+        jc .file_not_found
 
-        ; Convert 32-bit file size from EBX into DX:AX
+        ; Save 32-bit file size
+        mov [.file_size], ebx
+
+        ; Convert bytes from EBX into DX:AX
         mov ax, bx
         mov edx, ebx
         shr edx, 16
 
-        ; Convert the number into a decimal string
         mov bx, 10
         mov di, .number
         call os_long_int_to_string
 
-        ; Display the result
-        mov si, .size_msg
+        ; Display bytes
+        mov si, .bytes_msg
+        call os_print_string
+        mov si, .number
+        call os_print_string
+        mov si, .bytes_suffix
+        call os_print_string
+        call os_print_newline
+
+        ; Calculate KB = bytes / 1024
+        mov eax, [.file_size]
+        shr eax, 10
+        mov edx, eax
+        shr edx, 16
+
+        mov bx, 10
+        mov di, .number
+        call os_long_int_to_string
+
+        ; Display KB
+        mov si, .kb_msg
+        call os_print_string
+        mov si, .number
+        call os_print_string
+        mov si, .kb_suffix
+        call os_print_string
+        call os_print_newline
+        jmp get_cmd
+
+.no_filename:
+        mov si, .no_filename_msg
+        call os_print_string
+        jmp get_cmd
+
+.invalid_filename:
+        mov si, .invalid_filename_msg
+        call os_print_string
+        jmp get_cmd
+
+.file_not_found:
+        mov si, .not_found_msg
+        call os_print_string
+        jmp get_cmd
+
+.no_filename_msg     db 'Error: Please provide a filename.', 13, 10, 0
+.invalid_filename_msg db 'Error: Invalid filename format.', 13, 10, 0
+.not_found_msg        db 'Error: File not found.', 13, 10, 0
+.bytes_msg            db 'File size: ', 0
+.bytes_suffix         db ' bytes', 0
+.kb_msg               db 'Approximate size: ', 0
+.kb_suffix            db ' KB', 0
+.number               times 13 db 0
+.file_size            dd 0
+.filename             dw 0
+
+
+
+
+
+; ------------------------------------------------------------------
+; COUNT - Display successful file operation count
+
+count_file_operations:
+        xor edx, edx
+        mov ax, [file_operation_count]
+
+        mov bx, 10
+        mov di, .number
+        call os_long_int_to_string
+
+        mov si, .message
         call os_print_string
 
         mov si, di
@@ -639,15 +728,59 @@ size_file:
         call os_print_newline
         jmp get_cmd
 
-.failure:
-        mov si, notfound_msg
+.message db 'File operations completed: ', 0
+.number times 13 db 0
+
+
+; ------------------------------------------------------------------
+; PROTECT filename
+
+protect_file:
+        mov si, [param_list]
+        call os_string_parse
+        cmp ax, 0
+        je .failure
+
+        call os_protect_file
+        jc .failure
+
+        mov si, .success_msg
         call os_print_string
         jmp get_cmd
 
-.size_msg       db 'Size (in bytes) is: ', 0
-.number         times 13 db 0
+.failure:
+        mov si, .failure_msg
+        call os_print_string
+        jmp get_cmd
+
+.success_msg db 'File protected successfully.', 13, 10, 0
+.failure_msg db 'Could not protect file.', 13, 10, 0
+
 
 ; ------------------------------------------------------------------
+; UNPROTECT filename
+
+unprotect_file:
+        mov si, [param_list]
+        call os_string_parse
+        cmp ax, 0
+        je .failure
+
+        call os_unprotect_file
+        jc .failure
+
+        mov si, .success_msg
+        call os_print_string
+        jmp get_cmd
+
+.failure:
+        mov si, .failure_msg
+        call os_print_string
+        jmp get_cmd
+
+.success_msg db 'File protection removed.', 13, 10, 0
+.failure_msg db 'Could not remove file protection.', 13, 10, 0
+
 
 copy_file:
 	mov word si, [param_list]
@@ -1198,6 +1331,9 @@ exit:
 	ren_string		db 'REN', 0
 	copy_string		db 'COPY', 0
 	size_string		db 'SIZE', 0
+	count_string     db 'COUNT', 0
+	protect_string          db 'PROTECT', 0
+    unprotect_string        db 'UNPROTECT', 0
 	about_string		db 'ABOUT', 0
 	pbl_string		db 'PBL', 0
 	sysinfo_string		db 'SYSINFO', 0
