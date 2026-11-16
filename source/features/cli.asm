@@ -65,6 +65,10 @@ get_cmd:				; Main processing loop
 	call os_string_compare
 	jc near print_help
 
+	mov di, help_shortcut_string	; '?' entered?
+	call os_string_compare
+	jc near print_help
+
 	mov di, cls_string		; 'CLS' entered?
 	call os_string_compare
 	jc near clear_screen
@@ -1286,23 +1290,28 @@ exit:
 	prompt			db 'GMUOS-T3> ', 0
 
 
-	help_text		db 'DIR      : List files; optional BIN or TXT filter', 13, 10
-			db 'LS       : Detailed file listing', 13, 10
-			db 'COPY     : Copy a file', 13, 10
-			db 'REN      : Rename a file', 13, 10
-			db 'DEL      : Delete a file', 13, 10
-			db 'CAT      : Display a text file', 13, 10
-			db 'SIZE     : Show file size', 13, 10
-			db 'CLS      : Clear the screen', 13, 10
-			db 'HELP     : Show the command table', 13, 10
-			db 'ABOUT    : Show GMU-OS information', 13, 10
-			db 'PBL      : Tell about pbl details', 13, 10
-			db 'SYSINFO  : Show system information', 13, 10
-			db 'SHUTDOWN : Shut down after N seconds', 13, 10
-			db 'TIME     : Show the current time', 13, 10
-			db 'DATE     : Show the current date', 13, 10
-			db 'VER      : Show GMU-OS version', 13, 10
-			db 'EXIT     : Leave the command shell', 13, 10, 0
+	help_text		db 'GMU OS COMMAND REFERENCE', 13, 10
+			db 'FILE MANAGEMENT', 13, 10
+			db 'DIR [BIN|TXT]       List files (optional type filter)', 13, 10
+			db 'LS                  Show detailed file listing', 13, 10
+			db 'CAT <file>          Display a text file', 13, 10
+			db 'SIZE <file>         Show file size in bytes and KB', 13, 10
+			db 'COPY <src> <dst>    Copy a file', 13, 10
+			db 'REN <old> <new>     Rename a file', 13, 10
+			db 'DEL <file>          Delete a file', 13, 10
+			db 'COUNT               Show successful file operation count', 13, 10
+			db 'PROTECT <file>      Set file read-only attribute', 13, 10
+			db 'UNPROTECT <file>    Clear file read-only attribute', 13, 10
+			db 'SYSTEM INFORMATION', 13, 10
+			db 'TIME / DATE / VER   Show time, date, or OS version', 13, 10
+			db 'ABOUT / PBL         Show GMU OS or PBL information', 13, 10
+			db 'SYSINFO             Show system information', 13, 10
+			db 'SCREEN AND INTERFACE', 13, 10
+			db 'HELP or ?           Show this command reference', 13, 10
+			db 'CLS                 Clear the screen', 13, 10
+			db 'EXIT                Leave the command shell', 13, 10
+			db 'DISK PROGRAMS', 13, 10
+			db 'name[.BIN|.BAS]     Run a disk program (extension optional)', 13, 10, 0
 	invalid_msg		db 'No such command or program', 13, 10, 0
 	sysinfo_load_error	db 'Could not load SYSINFO.BIN', 13, 10, 0
 	nofilename_msg		db 'No filename or not enough filenames', 13, 10, 0
@@ -1321,6 +1330,7 @@ exit:
 
 	exit_string		db 'EXIT', 0
 	help_string		db 'HELP', 0
+	help_shortcut_string	db '?', 0
 	cls_string		db 'CLS', 0
 	dir_string		db 'DIR', 0
 	time_string		db 'TIME', 0
