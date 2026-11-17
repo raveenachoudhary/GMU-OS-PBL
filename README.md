@@ -106,6 +106,10 @@ For Windows:
 
 Clone the repository and enter its directory:
 
+```bash
+git clone https://github.com/raveenachoudhary/GMU-OS-PBL.git
+cd GMU-OS-PBL
+```
 
 Build the GMU OS image:
 
@@ -157,6 +161,25 @@ COUNT
 You can also explore the supplied C utilities, including `SYSINFO` and `GMUINFO.BIN`.
 
 ---
+
+## Screenshots
+
+### GMU OS Boot Screen
+
+![GMU OS boot screen](screenshots/01-boot-screen.png)
+
+### Categorized HELP Command
+
+![Categorized HELP command](screenshots/02-help-command.png)
+
+### SIZE Command
+
+![SIZE command output](screenshots/03-size-command.png)
+
+### System Information
+
+![SYSINFO output](screenshots/04-sysinfo.png)
+
 
 ## Verification
 
