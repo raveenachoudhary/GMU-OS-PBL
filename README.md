@@ -164,7 +164,7 @@ The project includes a package verification record in `GMU_OS_VERIFICATION.txt`.
 
 Recorded checks include:
 
-- The verification record covers a 97-file package; the current Git repository tracks 116 files.
+- The verification record covers a 97-file package; the current Git repository tracks 117 files.
 - Bootable floppy image size: 1,474,560 bytes.
 - Boot signature: `55AA`.
 - GMU OS branding detected in the image.
