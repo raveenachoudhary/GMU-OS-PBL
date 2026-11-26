@@ -33,6 +33,9 @@ GMU OS 0.1 is an educational derivative of **MikeOS 4.7.0**. It retains the orig
 - Video mode information.
 - Available BIOS hardware information.
 
+##64-bit UEFI Pendrive Boot & Hot-Plug USB Detection
+Boots directly on bare-metal hardware from a FAT32 USB flash drive (`BOOT`) and dynamically scans, mounts, and reads newly inserted pendrives (`USB0:/`) via `refresh`, `usbinfo`, and `DIR` commands.
+
 ---
 
 ## Architecture
@@ -161,6 +164,18 @@ COUNT
 You can also explore the supplied C utilities, including `SYSINFO` and `GMUINFO.BIN`.
 
 ---
+## Running on Real Hardware (64-bit UEFI Pendrive Boot)
+
+GMU-OS 4.7.0 (64-bit UEFI Edition) can boot directly from a physical USB flash drive without an emulator:
+
+1. **Prepare the Bootable Pendrive (`BOOT`):**
+   - Format the USB drive as **FAT32** and copy the compiled 64-bit UEFI boot files onto it.
+2. **Boot on Physical Hardware:**
+   - Insert the pendrive, restart the PC, and open the UEFI Boot Menu (`F12`, `F9`, or `Esc`).
+   - Select the USB device to launch the `GMU-OS>` shell.
+3. **Detect & Access a Newly Inserted Pendrive (`USB0`):**
+   - Plug in a second FAT32 pendrive while GMU-OS is running.
+   - Run `refresh` to re-scan UEFI storage controllers, `usbinfo` to inspect capacity and filesystem details, and `DIR USB0:/` to browse files and directories.
 
 ## Screenshots
 
@@ -180,6 +195,13 @@ You can also explore the supplied C utilities, including `SYSINFO` and `GMUINFO.
 
 ![SYSINFO output](screenshots/04-sysinfo.png)
 
+### 64-Bit UEFI Pendrive Boot (`usbinfo`)
+
+![GMU-OS 4.7.0 UEFI Pendrive Boot](screenshots/uefi_pendrive_boot.jpg)
+
+### New Pendrive Detection (`refresh`, `usbinfo`, and `DIR USB0:/`)
+![New Pendrive Detection and Directory Listing](screenshots/usb_hotplug_detection.jpg)
+
 
 ## Verification
 
@@ -197,6 +219,9 @@ Recorded checks include:
 The Week 10 QEMU test report also records tests for `HELP`, `help`, `?`, `ver`, `date`, `COUNT`, `SIZE`, and unknown-command handling.
 
 These records document the tests performed in the development environment; they are not a guarantee of compatibility with every machine or emulator.
+
+- [x] **Bare-Metal UEFI USB Boot:** Verified `GMU-OS 4.7.0 (64-bit UEFI Edition)` booting from a 3.7 GB FAT32 `BOOT` pendrive on physical hardware.
+- [x] **Dynamic Pendrive Detection:** Verified hot-plug discovery of a secondary 7.4 GB FAT32 pendrive (`USB0`) using `refresh`, `usbinfo`, and read/write directory listing (`DIR USB0:/`).
 
 ---
 
