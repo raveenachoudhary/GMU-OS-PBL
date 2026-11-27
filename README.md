@@ -197,10 +197,10 @@ GMU-OS 4.7.0 (64-bit UEFI Edition) can boot directly from a physical USB flash d
 
 ### 64-Bit UEFI Pendrive Boot (`usbinfo`)
 
-![GMU-OS 4.7.0 UEFI Pendrive Boot](screenshots/uefi_pendrive_boot.jpg)
+![GMU-OS 4.7.0 UEFI Pendrive Boot](uefi_pendrive_boot.jpeg)
 
 ### New Pendrive Detection (`refresh`, `usbinfo`, and `DIR USB0:/`)
-![New Pendrive Detection and Directory Listing](screenshots/usb_hotplug_detection.jpg)
+![New Pendrive Detection and Directory Listing](usb_hotplug_detection.jpeg)
 
 
 ## Verification
